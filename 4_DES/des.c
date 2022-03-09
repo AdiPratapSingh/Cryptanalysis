@@ -112,8 +112,8 @@ void set_the_key(sw1, pkey, r)
       t1 = CD[0];
       t2 = CD[28];
       for ( k=0; k<27; k++) {
-	CD[k] = CD[k+1];
-	CD[k+28] = CD[k+29];
+	      CD[k] = CD[k+1];
+	      CD[k+28] = CD[k+29];
       }
       CD[27] = t1;
       CD[55] = t2;
@@ -233,10 +233,6 @@ INT INV_P[] = {
 	5, 27, 15, 21,
 };
 
-
-
-
-
 void des(in,out,r,flag)
      BYTE *in;              /* packed 64 bit Input block */
      BYTE *out;             /* packed 64 bit output block */
@@ -259,18 +255,18 @@ void des(in,out,r,flag)
   /*
     printf("\nThe block after the initial permutation IP \n");
   */
-       for (j =0; j<64 ; j++)
-        {
-                LR[j] = block[IP[j] -1];
-                /*printf("%d", LR[j]);*/
-        }
+  for (j =0; j<64 ; j++)
+  {
+          LR[j] = block[IP[j] -1];
+          /*printf("%d", LR[j]);*/
+  }
 
-        /* Perform r rounds */
-        /*
-        printf(" In des 3rd round expandes block is \n");
-        */
+  /* Perform r rounds */
+  /*
+  printf(" In des 3rd round expandes block is \n");
+  */
 
-        for (i=0; i<r; i++) {  /**--*/
+  for (i=0; i<r; i++) {  /**--*/
 	  /* expand R to 48 bits with E and XOR  with ith subkey */
 	  for( j=0; j<48; j++) {
 	    preS[j] = LR[E[j] +31]^KS[i][j];
@@ -312,28 +308,28 @@ void des(in,out,r,flag)
 	    /* Copy R */
 	    t = LR[j+32];
 	    /* Permute Permute f w/ P and XOR w/ L to generate new R*/
-		if (flag == 'N')
+		  if (flag == 'N')
 	    	LR[j+32] = LR[j]^f[P[j] -1];
-		else
+		  else
 	    	LR[j+32] = LR[j]^f[INV_P[j] -1];
 	    /*LR[j+32] = LR[j]^f[j];*/
 	    /* copy original R to new L */
 	    LR[j] =t;
 	  }
 	  
-        }
-        /*
-	  printf( "\n\n I am in Des , block before final RFP permute\n");
-	  for(i=0; i<64; i++)
-	  printf( "%d", LR[i]);
-        */
-        /* Permute L and R with reverse IP-1 to generate output block*/
-        for (j=0; j < 64; j++) block [j] = LR[RFP[j]-1];
-	
-        /* Pack data into 8 bits per byte */
-	
-        pack8(out, block);
-        /*
+  }
+      /*
+  printf( "\n\n I am in Des , block before final RFP permute\n");
+  for(i=0; i<64; i++)
+  printf( "%d", LR[i]);
+  */
+  /* Permute L and R with reverse IP-1 to generate output block*/
+  for (j=0; j < 64; j++) block [j] = LR[RFP[j]-1];
+
+  /* Pack data into 8 bits per byte */
+
+  pack8(out, block);
+  /*
 	  out[9] = '\0';
         */
 }
