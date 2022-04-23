@@ -82,8 +82,7 @@ int main(){
       b_xor = t1;
       a_xor = t2;
       gamma = t3;
-      for(int j = 0 ; j < 8 ; j++)
-      {
+      for(int j = 0 ; j < 8 ; j++){
         long long int temp_a,temp_b,temp_g;
         temp_a = a_xor/(long long int)(powf(2,6*(7-j)));
         temp_b = b_xor/(long long int)(powf(2,4*(7-j)));

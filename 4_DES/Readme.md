@@ -1,0 +1,23 @@
+We were given an interface that was based on DES encryption. According to the hint, we started with the six-round DES. It was also given that each byte was represented using two letters. On looking carefully, we observed that the output only contained the letters in the
+range d to s and there was a hint that two letters are used for a byte. We therefore concluded that they represented the numbers in range 0 to 15.
+
+We used the standard characteristic of 7 round DES in the case of 6 round for differential cryptanalysis, ” 405c0000 04000000” which we got in the research paper. After four rounds, it produces ”00540000 04000000” with a probability of
+0.000381. Thus we need approximately 20/ p=52500 chosen plain text ciphertext pair for this attack. In order to make the more clear distinction we used 100000 pairs of plaintext ciphertext. We firstly generated random binary strings of length 64 using 'ingen.cpp' and stored it into 'inrand.txt'. 
+
+Next, we generate another file 'inpair.txt' output using req 'txor.cpp' and 'inrand.txt' such that the pairwise xor value of the items in 'inpair.txt' is equal to ”0000901010005000”. The binary values are changed to a string value to produce the output in string format.
+
+The items from 'inpair.txt' are sent to the game server using shell.sh which is an expect
+script. The output produced by this script is directed to 'gameoutput.log' file. 'cleanoutput.py' file cleanes the 'gameoutput.log' and stores the encrypted values to 'outpair.txt'. This file is then converted to binary encoding using the 'strtobin.cpp' file to produce 'output.txt' file.
+
+By now we have plaintext and corresponding ciphertext with the required pair wise XOR. We are ready for our analysis. We now use differential.cpp to produce files bxor.txt (Xor of beta values), yxor.txt (xor of gamma values), finalrevperm.txt (Reverseing the final permutation). The finalrevperm.txt is the reverse permutation of xor values to nullify the effect of last permutation transformation. Inverse permutation of Right half gives us the XOR of gamma values. Whereas the left half is equivalent to R5. Since taking XOR with keys of alpha value does not affect the pair wise xor, we can say that
+<img src="https://render.githubusercontent.com/render/math?math=\alpha_1 \oplus \alpha_2 = \beta_1 \oplus \beta_2">
+
+After finding out xor values of γ, we find α values by transforming left half of ciphertext xor which is equivalent to the right half of fifth round i.e. R5 by using an expansion in alpha.cpp.
+
+The probability of occurrence of subset key value in the actual key <img src="https://render.githubusercontent.com/render/math?math=K_{6,i}">is equal to the probability of occurrence of <img src="https://render.githubusercontent.com/render/math?math=(\beta,\beta')"> in <img src="https://render.githubusercontent.com/render/math?math=X_i">. Therefore we used frekey.cpp to generate values of the key corresponding to the values of \betaβ and keep a note of the frequency of their occurrences. File frekey.txt is produced which denotes the frequency of the corresponding key value.
+
+As we know the probability of occurrence of correct key value is more than a random (wrong) key-value because we have chosen a high probability characteristic. In our case the max frequency of six-bit value of keys was [45, 59, 46, 11, 46, 25, 1, 48]. Here the values of third and fourth-round were fluctuating. Hence we ignored them and used permkey.cpp to produce an overall 56-bit key by entering a 48-bit key value of the last round. In our case the key value for last round was "101101111011XXXXXXXXXXXX101110011001000001110000". Which on permuting gave  "XX1XX1XXX10X1X10XXX11XX11X0X1100101X00001000X01X0111X001"
+
+Now using 'makekey.py' we produced all the possible key values and storing it into 'brukey.txt'. This text file was then passed to 'brukey.cpp' along with a plaintext ciphertext pair. It basically takes a key-value from a text file, encrypts the plaintext, and matches the outcome with the ciphertext to find the correct key value. Now once we have the correct key value, we use 'pwddecry.cpp' to decrypt the ciphertext which we got after typing "password" on console, i.e. 'sqknijrmjfgoslfknkhrfsqhsihgioqm'. We got our output as 'rrrqixbrir000000'. The trailing 0's are ignored as they are used for padding. Hence our password for this level was 'rrrqixbrir'.
+
+All the intermediate files produced are stored in the code submitted along with this submission for reference.
